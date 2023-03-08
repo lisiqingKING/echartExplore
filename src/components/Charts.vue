@@ -104,9 +104,7 @@ import { onMounted, Ref, ref } from 'vue';
  * ----------------------------------------------------------------
  */
 
-const props = defineProps<{
-  title: 
-}>()
+const props = defineProps<{}>()
 
 const chartDomRef: Ref<HTMLElement|undefined> = ref(undefined)
 const option: Ref<EChartsOption|undefined> = ref(undefined)

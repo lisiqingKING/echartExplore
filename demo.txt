@@ -1,0 +1,29 @@
+传入 title              批量设置 
+传入 orginTitle         原生设置 
+
+传入 independtTitle     独立设置 { index, value }
+传入 title.style.color  深度设置
+传入 其他属性 取决与 类型组件是否有对该属性的设置 
+优先级 
+
+极端情况
+    独立设置 hh 
+    option: {
+        A: [
+            { },
+            { 
+                value: [
+                    { }
+                    { 
+                        hh: 'xx'
+                    }
+                ],
+            }
+        ]
+    }
+    A[index1][value][index2][hh]
+
+    <Chart
+        :title=""
+        :a
+    />
