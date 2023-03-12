@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ChartDisplay from './ChartDisplay.vue';
+import ChartDisplay from './Display.vue';
 
 </script>
 

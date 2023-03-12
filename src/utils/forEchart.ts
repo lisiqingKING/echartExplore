@@ -36,3 +36,19 @@ export const setAttr = (target: CommonObject, attr: string, value: any, isMerge:
         }
     }
 }
+
+export const setFormByFormItems = (formItems: AttrFormItems, form: CommonObject = {}) => {
+    /**
+     *  [ { label: '样式', type: ' } ]
+     */
+    formItems.forEach(item => {
+        if (item.children) {
+            form[item.key] = { }
+            setFormByFormItems(item.children, form[item.key])
+        } else {
+            form[item.key] = undefined
+        }
+    })
+}
+
+
