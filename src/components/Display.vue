@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Chart from './Charts.vue'
+import Chart from './Chart.vue'
 import ChartForm from './ChartForm.vue'
 import EditNav from './EditNav.vue';
 import { Ref, ref, reactive, computed, watch } from 'vue'
