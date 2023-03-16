@@ -52,3 +52,40 @@ export const setFormByFormItems = (formItems: AttrFormItems, form: CommonObject 
 }
 
 
+export const produceReflectDisplayObject = (data: CommonObject) => {
+    const _value: CommonObject = {}
+
+    const fn = (d: CommonObject, level: number = 1) => {
+        Object.keys(d).forEach(key => {
+            _value[key] = {
+                level,
+                display: level === 1
+            }
+            console.log('@_value[key]', _value[key])
+            if (d[key]?.constructor === Object) {
+                fn(d[key], level + 1)
+            }
+        })
+    }
+    fn(data)
+
+    return _value
+}
+
+export const produceAttrJoinObject = (parentAttr: string, obj: CommonObject) => {
+    const _value: CommonObject = {}
+    
+    function fn (parentAttr: string, obj: CommonObject){
+        Object.keys(obj).forEach(key => {
+            // console.log('@', key, obj[key])
+            let newKey = parentAttr ? parentAttr + '.' + key : key
+            // console.log('@newkey', newKey)
+            _value[newKey] = obj[key]
+            console.log(_value)
+            _value[newKey]?.constructor === Object && produceAttrJoinObject(newKey, _value[newKey])
+        })
+    }
+    fn(parentAttr, obj)
+
+    return _value
+}

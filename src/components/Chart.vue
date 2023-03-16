@@ -2,7 +2,7 @@
 import { useEventListener } from '@vueuse/core';
 import * as echarts from 'echarts'
 import { EChartsOption, ECharts  } from 'echarts';
-import { onMounted, watch, Ref, ref } from 'vue';
+import { onMounted, watch, Ref, ref, watchEffect, onUpdated, toRefs } from 'vue';
 import Bar from '../config/bar/option'
 /**
  * ----------------------------------------------------------------
@@ -107,16 +107,20 @@ import Bar from '../config/bar/option'
 
 interface Props  {
   type: ChartType,
-  isResize: Boolean,
-  [propName: string]: any,
+  isResize: boolean,
+  option: CommonObject
 } 
 
 const TypeMap: CommonObject = {
   'bar' : Bar
 }
+
 const props = withDefaults(defineProps<Props>(), {
-  isResize: true
+  type: 'bar',
+  isResize: true,
+  option: () => ({})
 })
+
 
 const option: Ref<EChartsOption|null> = ref(null)
 const chartDomRef: Ref<HTMLElement|null> = ref(null)
@@ -138,28 +142,34 @@ const handleCommonPartOption = (optionValue: CommonObject,optionProps: Props ) =
 
 // 图表选线初始化
 const initOption = (optionProps: Props) => {
+  console.log('@initOption', optionProps.type, props.type)
   let _option: CommonObject = {}
 
   // 本组件如何处理 props 生成对应的option属性
   handleCommonPartOption(_option, optionProps)
 
   // 类型组件处理
-  TypeMap[props.type].initOption(_option, optionProps)
+  TypeMap[props.type].initOption(optionProps, _option)
+  console.log('@option', _option)
   option.value = _option
 }
 
-watch(() => props, () => {
+
+watch(props, () => {
   initOption(props as Props)
   render(option.value as EChartsOption)
 })
 
+
+
+
 onMounted(() => {
-  // initOption(props as Props)
-  // chartRef.value = echarts.init(chartDomRef.value as HTMLElement);
-  // render(option.value as EChartsOption)
-  // useEventListener('resize', () => {
-  //   props.isResize && render(option.value as EChartsOption)
-  // })
+  initOption(props as Props)
+  chartRef.value = echarts.init(chartDomRef.value as HTMLElement);
+  render(option.value as EChartsOption)
+  useEventListener('resize', () => {
+    props.isResize && chartRef.value?.resize()
+  })
 })
 
 defineExpose({

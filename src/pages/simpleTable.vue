@@ -7,7 +7,7 @@ const props = defineProps<{
 </script>
 
 <template>
-     <el-table v-model:data="$attrs.data" style="width: 100%">
+     <el-table v-model:data="$attrs.data" style="width: 100%;">
         <el-table-column
             v-for="item in tableColumns"
             :prop="item.prop" 

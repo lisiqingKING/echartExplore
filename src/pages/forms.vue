@@ -1,140 +1,80 @@
 <script setup lang="ts">
-import { ElInput, ElInputNumber, ElRadioGroup } from 'element-plus';
 import { cloneDeep } from 'lodash';
-import { Ref, ref, reactive, computed } from 'vue'
+import { Ref, ref, reactive, computed, watch, toRefs } from 'vue'
 import simpleTable from './simpleTable.vue';
-//--- 默认数据
+import { itemFormItemMap, CommonentMap, TableColumns } from './about'
+import attrTree from '../pages/attrTree.vue'
+import { produceReflectDisplayObject } from '../utils/forEchart'
 
-const defaultXAxisTemplate = {
-    type: 'category'
-}
-
-const defaultYAxisTemplate = {
-    type: 'value'
-}
-
-const defaultSeriesTemplate = {
-    type: 'bar'
-}
-
-
-
-const itemFormItemMap: { [propName: string]: FormItems } = {
-    'xAxis.length': [{ label: 'xAxis系类数目', type: 'input-number', key: 'xAxisLength' }],
-    'show': [{ label: 'xAxis是否显示', type: 'radio-group', key: 'show' }],
-    'data': [
-        { label: 'xAxis数据', type: 'input', key: 'xAxisData'}
-    ]
-}
-
-const CommonentMap = {
-    'input': ElInput,
-    'input-number': ElInputNumber,
-    'radio-group': ElRadioGroup,
-}
-
+const emits = defineEmits(['updateForms'])
 const activeName: Ref<tabName> = ref('xAxis')
 
-const xAxisTableColumns: Array<AxisTableColumn> = [
-    { label: '属性', prop: 'name', width: 120 },
-    { label: '声明', prop: 'note', width: 300 },
-    { label: '操作', prop: 'operate', width: 100, slotName: 'operate' },
-]
+const props = defineProps<{
+    forms: CommonObject,
+    tableData: CommonObject
+}>()
+const { forms, tableData } = toRefs(props)
 
-const xAxisTableData: Ref<Array<AxisTableRow>> = ref([
-    {
-        name: 'xAxis.length',
-        note: 'x系列长度',
-        data: {
-            xAxisLength: 1,
-        },
-       
-    },
-    {
-        name: 'show',
-        note: 'X轴是否显示',
-        data: {
-            show: true
-        },
-      
-    },
-    {
-        name: 'data',
-        note: 'X轴数据',
-        data: {
-            xAxisData: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        },
-        
-    },
-])
-
-const yAxisTableColumns: Array<AxisTableColumn> = [
-    { label: '属性', prop: 'name', width: 100 },
-    { label: '声明', prop: 'note', width: 300 },
-    { label: '操作', prop: 'operate', width: 100, slotName: 'operate' },
-]
-
-const yAxisTableData: Ref<Array<AxisTableRow>> = ref([
-    {
-        name: 'show',
-        note: 'X轴是否显示',
-        data: true,
-    }
-])
-
-
-const forms = computed(() => {
-    let _value = {};
-    [...xAxisTableData.value, ...yAxisTableData.value].forEach(item => {
-        _value = { ..._value, ...eval(item.data) }
-    })
-    return _value
-})
 const dialog = reactive<{
     visible: boolean,
     title: string,
     form:  CommonObject,
-    formItems: FormItems
+    formItems: FormItems,
+    displayObject: CommonObject,
 }>({
     visible: false,
     title: 'xAxis',
     form: {},
-    formItems: []
+    formItems: [],
+    displayObject: {}
 })
 
-const curRow: Ref<AxisTableRow|null> = ref(null)
-const openXDialog = (title: string, row: AxisTableRow) => {
+watch(forms, (val) => {
+    emits('updateForms', val)
+}, { immediate: true, deep: true })
+
+const curRow: Ref<TableRow|null> = ref(null)
+const openXDialog = (title: string, row: TableRow) => {
     curRow.value = row
     dialog.visible = true
     dialog.title = title + row.name + '编辑'
    
-    dialog.formItems = itemFormItemMap[row.name]
+    dialog.formItems = itemFormItemMap[row.reflectFormItemKey]
     dialog.form = cloneDeep(row.data)
+    dialog.displayObject = produceReflectDisplayObject(dialog.form)
+    console.log('@dialog.displayObject', dialog.displayObject, dialog.form, dialog.formItems)
 }
 const handleSave = () => {
     dialog.visible = false;
-    (curRow.value as AxisTableRow).data = dialog.form
+    (curRow.value as TableRow).data = dialog.form
     console.log('@see form: ', dialog.form)
-    console.log('@see we want form:', forms.value)
+    // console.log('@see we want form:', forms.value)
 }
 
 
 </script>
 
 <template>
-    <div class="container">
+    <div class="forms-container">
         <el-tabs v-model="activeName" class="demo-tabs">
             <el-tab-pane label="xAxis" name="xAxis">
-                <simpleTable v-model:data="xAxisTableData" :table-columns="xAxisTableColumns">
+                <simpleTable v-model:data="tableData.xAxisTableData" :table-columns="TableColumns">
                     <template #operate="{ row }"  >
                         <el-button @click="() => openXDialog('xAxis', row)">编辑</el-button>
                     </template>
                 </simpleTable>
             </el-tab-pane>
             <el-tab-pane label="yAxis" name="yAxis">
-                <simpleTable v-model:data="yAxisTableData" :table-columns="yAxisTableColumns">
+                <simpleTable v-model:data="tableData.yAxisTableData" :table-columns="TableColumns">
                     <template #operate="{ row }"  >
-                        <el-button @click="() => openXDialog('xAxis', row)">编辑</el-button>
+                        <el-button @click="() => openXDialog('yAxis', row)">编辑</el-button>
+                    </template>
+                </simpleTable>
+            </el-tab-pane>
+            <el-tab-pane label="series" name="series">
+                <simpleTable v-model:data="tableData.seriesTableData" :table-columns="TableColumns">
+                    <template #operate="{ row }"  >
+                        <el-button @click="() => openXDialog('series', row)">编辑</el-button>
                     </template>
                 </simpleTable>
             </el-tab-pane>
@@ -143,7 +83,7 @@ const handleSave = () => {
             v-model="dialog.visible"
             :title="dialog.title"
         >
-           <el-form v-model="dialog.form" label-width="120px" label-position="left">
+           <!-- <el-form v-model="dialog.form" label-width="120px" label-position="left">
             <el-form-item v-for="item in dialog.formItems" :key="item.key" :label="item.label">
                 <component 
                     :is="CommonentMap[item.type]" 
@@ -156,7 +96,15 @@ const handleSave = () => {
                     </template>
                 </component>
             </el-form-item>
-           </el-form>
+           </el-form> -->
+           <!--how to use tips-->
+          
+            <attrTree 
+                v-model="dialog.form" 
+                v-model:displayObject="dialog.displayObject"
+                :formItems="dialog.formItems" 
+            />
+          
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="() => dialog.visible = false">取消</el-button>
@@ -168,7 +116,10 @@ const handleSave = () => {
 </template>
 
 <style lang="scss" moudle>
-.container {
+.forms-container {
    width: 100%;
+   .demo-tabs {
+    width: 100%;
+   }
 }
 </style>
