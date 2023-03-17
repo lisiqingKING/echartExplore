@@ -63,6 +63,29 @@ export const howToProduceChartArgs = (forms: CommonObject) => {
     }
 }
 
+const getFormsItemsDefaultData = (data: FormItemsMap) => {
+
+    const getItemsDefaultData = (formItems: Array<FormItem>) => {
+        let data = {}
+        formItems.forEach(formItem => {
+            formItem
+        })
+    }
+
+    let result: CommonObject = {}
+    Object.keys(data).forEach(key => {
+        !result[key] && (result[key] = {})
+        const [topkey, secondkey] = key.split('.')
+        result[topkey][secondkey] = getItemsDefaultData(data[key])
+    })
+
+    return result
+}
+
+export const initTableData = (formItems: { [propName: string]: FormItems }) => {
+    
+}
+
 export const initData = () => {
     const xAxisTableData: Ref<Array<TableRow>> = ref([
         {

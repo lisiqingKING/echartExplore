@@ -1,5 +1,5 @@
 
-import { merge } from 'lodash'
+import { cloneDeep, merge } from 'lodash'
 type CommonObject = {
     [propName: string]: any
     
@@ -88,4 +88,84 @@ export const produceAttrJoinObject = (parentAttr: string, obj: CommonObject) => 
     fn(parentAttr, obj)
 
     return _value
+}
+
+export const getFormsItemsDefaultData = (data: FormItemsMap) => {
+
+    /**
+     * 
+     * @param data 一份关于某个类型下顶级属性的深层层次配置表单
+     * @returns result 返回一份对应的顶级属性表单数据的集合
+     * 
+     * 
+     */
+
+    const abstractFormItemDefaultValue = (item: FormItem) => {
+        if (item.type !== 'form') {
+            return cloneDeep(item.defaultValue)
+        } else {
+            return getItemsDefaultData(item.children as FormItems)
+        }
+    }
+
+    const getItemsDefaultData = (formItems: Array<FormItem>) => {
+        let data: CommonObject = {}
+        formItems.forEach(formItem => {
+            data[formItem.key] = abstractFormItemDefaultValue(formItem)
+        })
+        return data
+    }
+
+    let result: CommonObject = {}
+    Object.keys(data).forEach(key => {
+        const [topkey, secondkey] = key.split('.')
+        !result[topkey] && (result[topkey] = {})
+        result[topkey][secondkey] = getItemsDefaultData(data[key])
+    })
+
+    return result
+}
+
+export const produceTableDataMap = (data: FormItemsMap) => {
+    /**
+     *  生成 tableData:
+     * 
+     */
+    let tableData: ChartTableDataMap = {}
+     Object.keys(data).forEach(key => {
+        const [topkey] = key.split('.')
+        tableData[topkey] && (tableData[topkey] = [])
+        const { note, key: itemKey } = data[key][0]
+        tableData[topkey].push({
+            name: key,
+            note,
+            key: itemKey
+        })
+     })
+
+     return tableData
+}
+
+// 将字符串形式的数组或者对象转化为真正的数组或者对象
+export const translateArrayOrObjectToSelf = (data: CommonObject) => {
+    const treeData: CommonObject = cloneDeep(data)
+    const isExecEval = (v: any) => {
+        if (typeof v === 'string') {
+            return v.includes('[') || v.includes('{')
+        } 
+        return false
+    }
+
+    Object.keys(treeData).forEach(item => {
+        treeData[item] = isExecEval(treeData[item]) ? eval(treeData[item]) : treeData[item]
+        typeof treeData[item] === 'object' && translateArrayOrObjectToSelf(treeData[item])
+    })
+
+    return treeData
+
+}
+
+// 将数组或者对象转化为字符串形式
+export const translateObjectOrArrayToStr = (data: CommonObject) => {
+    
 }

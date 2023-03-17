@@ -53,3 +53,5 @@ declare type ChartTypeOptionConfig = {
     initOption: (props: Props, option: CommonObject) => {},
     expose: CommonObject
 }
+
+declare type FormItemsMap = Record<string, FormItems>
