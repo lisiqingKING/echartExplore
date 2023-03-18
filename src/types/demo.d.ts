@@ -3,16 +3,22 @@ declare type CommonObject = { [propName: string]: any }
 declare type tabName = 'xAxis' | 'yAxis'
 declare type CommonOption = Array<{ label: string, value: string }>
 
-declare type AxisTableColumn = {
+declare type TableColumn = {
     label: string,
     prop: string,
     width?: number,
-    slotName?: string
+    slotName?: string,
+    note?: string
 }
+declare type TableColumns = Array<TableColumn>
+declare type ChartTableColumns = Record<string, TableColumns>
+
+
 declare type TableRow = {
     name: string,
     note?: string,
-    key: string
+    key: string,
+    slotName?: string
 }
 declare type FormItem = {
     label: string,
@@ -25,7 +31,9 @@ declare type FormItem = {
     disabled?: boolean,
     display?: boolean,
     rules?: Array<Function>,
-    note?: string
+    // for tableColumns
+    note?: string,
+    slotName?: string
 }
 declare type FormItems = Array<FormItem>
 
@@ -37,3 +45,6 @@ declare type ChartGuide = {
     option: CommonOption,
     defaultValues: Record<string, CommonObject>
 }
+
+declare type ChartBarEditItem = 'xAxis' | 'yAxis' | 'series'
+

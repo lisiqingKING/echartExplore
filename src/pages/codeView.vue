@@ -10,7 +10,7 @@ const returnValueStr = (v: any) => {
     if (Array.isArray(v)) {
         return `[${v}]`
     } else if (typeof v === 'object') {
-        return `{${JSON.stringify(v)}}`
+        return `${JSON.stringify(v)}`
     } else if( typeof v === 'string'){
         return `'${v}'`
     } else {

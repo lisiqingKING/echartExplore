@@ -54,4 +54,4 @@ declare type ChartTypeOptionConfig = {
     expose: CommonObject
 }
 
-declare type FormItemsMap = Record<string, FormItems>
+declare type FormsItemsMap = Record<string, FormItems>

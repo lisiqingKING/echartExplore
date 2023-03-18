@@ -5,7 +5,7 @@ import { getFormsItemsDefaultData, produceTableDataMap, translateArrayOrObjectTo
 import { useGuidOption } from '../../hooks/chart'
 import { cloneDeep } from 'lodash'
 
-export const useInit = (formItemsMap: FormItemsMap, guideOption: ChartGuide) => {
+export const useInit = (formItemsMap: FormsItemsMap, guideOption: ChartGuide) => {
 
     const { option, curSelectValue, defaultValue } = useGuidOption(guideOption)
 

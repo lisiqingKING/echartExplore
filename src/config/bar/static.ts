@@ -24,11 +24,35 @@ export const GuideTypeDefaultValue: Record<string, CommonObject> = {
     }
 }
 
+export const ChartGuide: ChartGuide = {
+    option: GuideTypeOption,
+    defaultValues: GuideTypeDefaultValue
+}
+
 // 柱状图type的选项
 export const BarTypeOption: CommonOption = [
     { label: 'category', value: 'category' },
     { label: 'value', value: 'value' },
 ]
+
+// 柱状图columns
+export const TableColumnsMap: Record<ChartBarEditItem, TableColumns> = {
+    'xAxis': [
+      { label: '属性', prop: 'name' },
+      { label: '使用', prop: 'note' }
+    ],
+    'yAxis': [
+        { label: '类型', prop: 'type', note: '',  },
+        { label: '数目', prop: 'length', note: '' },
+        { label: '显示', prop: 'display', note: '' },
+        { label: '数据', prop: 'data' },
+    ],
+    'series': [
+        { label: '数目', prop: 'length', note: '',  },
+        { label: '数据', prop: 'data', note: '',  },
+        { label: '标签', prop: 'label', note: '',  },
+    ]
+}
 
 // 柱状图可以配置的属性
 export const FormsItemsMap: { [propName: string]: FormItems } = {
@@ -92,6 +116,14 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             defaultValue: true 
         }
     ],
+    'yAxis.data':   [
+        { 
+            label: 'yAxis数据', 
+            type: 'input', 
+            key: 'data', 
+            defaultValue: "[]"
+        }
+    ],
     'series.length': [
         { 
             label: 'series系类数目', 
@@ -113,6 +145,7 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
           label: 'series标签', 
           type: 'form', 
           key: 'label', 
+          note: '标签设置',
           children: [
             { 
                 label: '标签是否展示', 

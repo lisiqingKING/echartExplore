@@ -16,7 +16,7 @@ export const useGuidOption = (args: ChartGuide) => {
     }
 }
 
-export const useChartDataInit = (formItemsMap: FormItemsMap, guideOption: ChartGuide) => {
+export const useChartDataInit = (formItemsMap: FormsItemsMap, guideOption: ChartGuide, tableColumnsMap: ChartTableColumns) => {
 
     // 用于类型引导选项
     const { option, curSelectValue, defaultValue } = useGuidOption(guideOption)
@@ -35,7 +35,7 @@ export const useChartDataInit = (formItemsMap: FormItemsMap, guideOption: ChartG
     const tableDataMap: ChartTableDataMap = produceTableDataMap(formItemsMap)
 
     // 动态表单属性 用于表单项是否可以修改 
-    const formsItemsMap: Ref<Record<string, FormItems>> = ref(cloneDeep(formItemsMap))
+    const formsItemsMap: Ref<FormsItemsMap> = ref(cloneDeep(formItemsMap))
 
     return {
         option,
@@ -44,6 +44,7 @@ export const useChartDataInit = (formItemsMap: FormItemsMap, guideOption: ChartG
         forms,
         tableDataMap,
         formsItemsMap,
-        propsForChart: formsForChart
+        propsForChart: formsForChart,
+        tableColumnsMap
     }
 }

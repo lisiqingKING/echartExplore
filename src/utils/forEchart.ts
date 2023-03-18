@@ -1,5 +1,5 @@
 
-import { cloneDeep, merge } from 'lodash'
+import { cloneDeep, isNil, merge } from 'lodash'
 type CommonObject = {
     [propName: string]: any
     
@@ -90,7 +90,7 @@ export const produceAttrJoinObject = (parentAttr: string, obj: CommonObject) => 
     return _value
 }
 
-export const getFormsItemsDefaultData = (data: FormItemsMap) => {
+export const getFormsItemsDefaultData = (data: FormsItemsMap) => {
 
     /**
      * 
@@ -100,33 +100,41 @@ export const getFormsItemsDefaultData = (data: FormItemsMap) => {
      * 
      */
 
-    const abstractFormItemDefaultValue = (item: FormItem) => {
-        if (item.type !== 'form') {
-            return cloneDeep(item.defaultValue)
-        } else {
-            return getItemsDefaultData(item.children as FormItems)
-        }
-    }
+    // const abstractFormItemDefaultValue = (item: FormItem) => {
+    //     if (item.type !== 'form') {
+    //         return cloneDeep(item.defaultValue)
+    //     } else {
+    //         return setDefaultItemsData(item.children as FormItems)
+    //     }
+    // }
 
-    const getItemsDefaultData = (formItems: Array<FormItem>) => {
-        let data: CommonObject = {}
+    const setDefaultItemsData = (target: CommonObject, formItems: Array<FormItem>) => {
+        console.log('debug-@', target, formItems)
         formItems.forEach(formItem => {
-            data[formItem.key] = abstractFormItemDefaultValue(formItem)
+            // target[formItem.key] = abstractFormItemDefaultValue(formItem)
+            if (formItem.type !== 'form') {
+                target[formItem.key] = cloneDeep(formItem.defaultValue)
+            } else {
+                !target[formItem.key] && (target[formItem.key] = {})
+                setDefaultItemsData(target[formItem.key], formItem.children as FormItems)
+            }
         })
-        return data
+        // return target
     }
 
     let result: CommonObject = {}
     Object.keys(data).forEach(key => {
-        const [topkey, secondkey] = key.split('.')
-        !result[topkey] && (result[topkey] = {})
-        result[topkey][secondkey] = getItemsDefaultData(data[key])
+        const [topkey] = key.split('.')
+        console.log('@topKey', topkey)
+        isNil(result[topkey]) && (result[topkey] = {})
+        // result[topkey][secondkey] = getItemsDefaultData(data[key])
+        setDefaultItemsData(result[topkey], data[key])
     })
 
     return result
 }
 
-export const produceTableDataMap = (data: FormItemsMap) => {
+export const produceTableDataMap = (data: FormsItemsMap) => {
     /**
      *  生成 tableData:
      * 
@@ -134,12 +142,13 @@ export const produceTableDataMap = (data: FormItemsMap) => {
     let tableData: ChartTableDataMap = {}
      Object.keys(data).forEach(key => {
         const [topkey] = key.split('.')
-        tableData[topkey] && (tableData[topkey] = [])
+        !tableData[topkey] && (tableData[topkey] = [])
         const { note, key: itemKey } = data[key][0]
         tableData[topkey].push({
             name: key,
             note,
-            key: itemKey
+            key: itemKey,
+            // slotName: 'operate' // 默认插槽
         })
      })
 
@@ -147,9 +156,9 @@ export const produceTableDataMap = (data: FormItemsMap) => {
 }
 
 // 将字符串形式的数组或者对象转化为真正的数组或者对象
-export const translateArrayOrObjectToSelf = (data: CommonObject) => {
-    const treeData: CommonObject = cloneDeep(data)
+export const translateArrayOrObjectToSelf = (treeData: CommonObject) => {
     const isExecEval = (v: any) => {
+        
         if (typeof v === 'string') {
             return v.includes('[') || v.includes('{')
         } 
@@ -157,8 +166,12 @@ export const translateArrayOrObjectToSelf = (data: CommonObject) => {
     }
 
     Object.keys(treeData).forEach(item => {
-        treeData[item] = isExecEval(treeData[item]) ? eval(treeData[item]) : treeData[item]
-        typeof treeData[item] === 'object' && translateArrayOrObjectToSelf(treeData[item])
+        if (treeData[item].constructor === Object) {
+            translateArrayOrObjectToSelf(treeData[item])
+        } else {
+           treeData[item] = isExecEval(treeData[item]) ? eval(treeData[item]) : treeData[item]
+        }
+        // console.log('@item', treeData[item])
     })
 
     return treeData
@@ -168,4 +181,18 @@ export const translateArrayOrObjectToSelf = (data: CommonObject) => {
 // 将数组或者对象转化为字符串形式
 export const translateObjectOrArrayToStr = (data: CommonObject) => {
     
+}
+
+// 将对象转为数组结构
+export const abstractAndtranslateToArray = (flag: string, data: Record<string, FormItems>): FormItems => {
+    let _result: FormItems = []
+
+    Object.keys(data).forEach(key => {
+        const [topKey] = key.split('.')
+        topKey === flag && (
+            _result = [..._result, ...data[key]]
+        )
+    })
+
+    return _result
 }

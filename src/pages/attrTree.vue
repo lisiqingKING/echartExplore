@@ -33,9 +33,10 @@ const props = defineProps({
   },
   displayObject: {
     type: Object,
+    default: ()=> ({})
   },
 })
-const { modelValue, formItems, displayObject } = toRefs(props)
+const { modelValue, formItems } = toRefs(props)
 
 const emits = defineEmits(['update:displayObject'])
 const handle = (item) => {
@@ -102,16 +103,25 @@ export default defineComponent({
       <template v-else-if="item.type === 'input-number'">
         <el-input-number v-model="modelValue[item.key]" />
       </template>
+      <template v-else-if="item.type === 'select'">
+        <el-select v-model="modelValue[item.key]">
+          <el-option 
+            v-for="item in item.option" 
+            :key="item.value" 
+            :value="item.value"
+            :label="item.label"
+            >
+          </el-option>
+        </el-select>
+      </template>
       <template v-else>
         <div style="height:22px; width:100%">
-          <ElButton @click="() => handle(displayObject[item.key])">
+          <!-- <ElButton @click="() => handle(displayObject[item.key])">
             {{ displayObject[item.key].display ? '收起' : '展开' }}
-          </ElButton>
+          </ElButton> -->
         </div>
         <Formx
-          v-if="displayObject[item.key].display"
           v-model="modelValue[item.key]"
-          v-model:displayObject="displayObject[item.key]"
           :formItems="item.children"
         />
       </template>
