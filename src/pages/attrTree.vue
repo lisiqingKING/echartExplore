@@ -37,7 +37,6 @@ const props = defineProps({
   },
 })
 const { modelValue, formItems } = toRefs(props)
-
 const emits = defineEmits(['update:displayObject'])
 const handle = (item) => {
   const curLevel = item.level
@@ -70,6 +69,8 @@ const handle = (item) => {
     })
   }
 }
+
+
 </script>
 
 <script>
@@ -81,7 +82,7 @@ export default defineComponent({
 
 <template>
   <ElForm
-    v-model="modelValue"
+    :model="modelValue"
     style="padding: 20px; width: 400px;"
     labelPosition="left"
   >
@@ -89,10 +90,12 @@ export default defineComponent({
       v-for="item in formItems"
       :key="item.id"
       :label="item.label"
+      :prop="item.key"
       style="margin-bottom: 10px"
+      :rules="item.rules"
     >
       <template v-if="item.type === 'input'">
-        <ElInput v-model="modelValue[item.key]" />
+        <ElInput v-model="modelValue[item.key]"/>
       </template>
       <template v-else-if="item.type === 'radio-group'">
         <el-radio-group v-model="modelValue[item.key]">

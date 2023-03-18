@@ -26,7 +26,7 @@ const to2DArray = (data: Array<any>) => {
 }
 
 const handleHandlezXAxis = (props: Props, option: CommonObject) => {
-    console.log('@bar:xAxis', props.option)
+    // console.log('@bar:xAxis', props.option)
     const { 
         'length': xAxisLength, 
         'show': xAxisShow, 
@@ -47,13 +47,13 @@ const handleHandlezXAxis = (props: Props, option: CommonObject) => {
     }
 
     // 独立设置
-    console.log('@_value:xAxis', _value)
+    // console.log('@_value:xAxis', _value)
 
     option.xAxis = _value
 }
 
 const handleHandlezYAxis = (props: Props, option: CommonObject) => {
-    console.log('@bar:yAxis')
+    // console.log('@bar:yAxis')
     const { 
         'length': yAxisLength,
         'show': yAxisShow, 
@@ -76,7 +76,7 @@ const handleHandlezYAxis = (props: Props, option: CommonObject) => {
 }
 
 const handleSeries = (props: Props, option: CommonObject) => {
-    console.log('@bar:series')
+    // console.log('@bar:series')
     const { 
         'length': seriesLength,
         'data': seriesData,
@@ -115,9 +115,9 @@ const barOptionHanlde = (props: Props, option: CommonObject) => {
     // needToDoItems.forEach(item => {
     //     itemHandleMap[item](props, option)
     // })
-    console.log('enter--------', cloneDeep(props))
+    // console.log('enter--------', cloneDeep(props))
     Object.keys(itemHandleMap).forEach(key => {
-        console.log('exec func', props, option)
+        // console.log('exec func', props, option)
         itemHandleMap[key](props, option)
     })
 } 

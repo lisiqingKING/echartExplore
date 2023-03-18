@@ -1,7 +1,10 @@
+
+
 declare type FormCommonentName = 'input' | 'input-number' | 'radio-group' | 'form' | 'select'
 declare type CommonObject = { [propName: string]: any }
 declare type tabName = 'xAxis' | 'yAxis'
 declare type CommonOption = Array<{ label: string, value: string }>
+
 
 declare type TableColumn = {
     label: string,
@@ -20,22 +23,25 @@ declare type TableRow = {
     key: string,
     slotName?: string
 }
-declare type FormItem = {
-    label: string,
-    key: string,
-    type: FormCommonentName,
-    props?: {},
-    option?: CommonOption,
-    children?: Array<FormItem>,
-    defaultValue?: string | number | boolean | Array | CommonObject,
-    disabled?: boolean,
-    display?: boolean,
-    rules?: Array<Function>,
-    // for tableColumns
-    note?: string,
-    slotName?: string
-}
-declare type FormItems = Array<FormItem>
+
+// 导入type文件然后会引起报错
+
+// declare type FormItem = {
+//     label: string,
+//     key: string,
+//     type: FormCommonentName,
+//     props?: {},
+//     option?: CommonOption,
+//     children?: Array<FormItem>,
+//     defaultValue?: string | number | boolean | Array | CommonObject,
+//     disabled?: boolean,
+//     display?: boolean,
+//     rules?: FormRules,
+//     // for tableColumns
+//     note?: string,
+//     slotName?: string
+// }
+// declare type FormItems = Array<FormItem>
 
 declare type ChartTableDataMap = Record<string, Array<TableRow>>
 
@@ -46,5 +52,5 @@ declare type ChartGuide = {
     defaultValues: Record<string, CommonObject>
 }
 
-declare type ChartBarEditItem = 'xAxis' | 'yAxis' | 'series'
+declare type ChartBarEditItem = 'xAxis' | 'yAxis' | 'series';
 

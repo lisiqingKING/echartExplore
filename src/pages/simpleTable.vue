@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, useAttrs } from 'vue'
+import { defineProps } from 'vue'
 import { TableColumn } from '../constant/chart'
 withDefaults(
     defineProps<{

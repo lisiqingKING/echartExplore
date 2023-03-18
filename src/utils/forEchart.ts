@@ -1,9 +1,6 @@
 
 import { cloneDeep, isNil, merge } from 'lodash'
-type CommonObject = {
-    [propName: string]: any
-    
-}
+import { FormItem, FormItems } from '../types/chartForm'
 
 
 export const setAttr = (target: CommonObject, attr: string, value: any, isMerge: Boolean = false) => {
@@ -61,7 +58,7 @@ export const produceReflectDisplayObject = (data: CommonObject) => {
                 level,
                 display: level === 1
             }
-            console.log('@_value[key]', _value[key])
+            // console.log('@_value[key]', _value[key])
             if (d[key]?.constructor === Object) {
                 fn(d[key], level + 1)
             }
@@ -81,7 +78,7 @@ export const produceAttrJoinObject = (parentAttr: string, obj: CommonObject) => 
             let newKey = parentAttr ? parentAttr + '.' + key : key
             // console.log('@newkey', newKey)
             _value[newKey] = obj[key]
-            console.log(_value)
+            // console.log(_value)
             _value[newKey]?.constructor === Object && produceAttrJoinObject(newKey, _value[newKey])
         })
     }
@@ -109,7 +106,7 @@ export const getFormsItemsDefaultData = (data: FormsItemsMap) => {
     // }
 
     const setDefaultItemsData = (target: CommonObject, formItems: Array<FormItem>) => {
-        console.log('debug-@', target, formItems)
+        // console.log('debug-@', target, formItems)
         formItems.forEach(formItem => {
             // target[formItem.key] = abstractFormItemDefaultValue(formItem)
             if (formItem.type !== 'form') {
@@ -125,7 +122,7 @@ export const getFormsItemsDefaultData = (data: FormsItemsMap) => {
     let result: CommonObject = {}
     Object.keys(data).forEach(key => {
         const [topkey] = key.split('.')
-        console.log('@topKey', topkey)
+        // console.log('@topKey', topkey)
         isNil(result[topkey]) && (result[topkey] = {})
         // result[topkey][secondkey] = getItemsDefaultData(data[key])
         setDefaultItemsData(result[topkey], data[key])
@@ -195,4 +192,14 @@ export const abstractAndtranslateToArray = (flag: string, data: Record<string, F
     })
 
     return _result
+}
+
+// 验证单项值是否通过
+export const validateValue = () => {
+
+}
+
+// 验证编辑完的整个表单
+export const validateForm = () => {
+
 }

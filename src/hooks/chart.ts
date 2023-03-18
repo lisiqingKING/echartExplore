@@ -25,7 +25,7 @@ export const useChartDataInit = (formItemsMap: FormsItemsMap, guideOption: Chart
     const forms: Ref<CommonObject> = ref(getFormsItemsDefaultData(formItemsMap));
     // 用于传给图表的props
     const formsForChart = computed(() => {
-        return translateArrayOrObjectToSelf(forms.value)
+        return translateArrayOrObjectToSelf(cloneDeep(forms.value))
     })
     watch(curSelectValue, () => {
         forms.value = defaultValue

@@ -3,6 +3,7 @@
  * 柱状图的配置选项设置默认表单
  */
 
+import { FormItems } from '../../types/chartForm'
 
 // 引导模式的选项
 export const GuideTypeOption: CommonOption = [
@@ -88,7 +89,18 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             label: 'xAxis数据', 
             type: 'input', 
             key: 'data', 
-            defaultValue: "['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']"
+            defaultValue: "['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']",
+            rules: [
+                { 
+                    validator: function (rule: any, value:any, callback: any) {
+                        console.log('......', value, rule, callback)
+                        // if (!(value as string).includes('[') ) {
+                        //     callback(new Error('请输入数组字符串'))
+                        // }
+                    },
+                    
+                }
+            ]
         }
     ],
     'yAxis.length': [
