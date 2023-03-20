@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { Ref, ref, toRefs } from 'vue'
 import simpleTable from './simpleTable.vue';
-import attrTree from '../pages/attrTree.vue'
+import attrTree from './attrTree.vue'
 
 
 const emits = defineEmits(['updateForms'])
 const props = defineProps<{
     forms: CommonObject,
     tableDataMap: ChartTableDataMap,
-    // tableColumnsMap: ChartTableColumns,
     formsItemsMap: FormsItemsMap
 }>()
 const { forms, tableDataMap, formsItemsMap } = toRefs(props)

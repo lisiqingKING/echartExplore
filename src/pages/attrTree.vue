@@ -1,5 +1,6 @@
 <script setup>
-import { toRefs } from 'vue'
+import { toRefs, ref, watch } from 'vue'
+import { cloneDeep, merge } from 'lodash'
 const props = defineProps({
   modelValue: {
     type: Object,
@@ -7,29 +8,7 @@ const props = defineProps({
   },
   formItems: {
     type: Array,
-    default: () => ([
-      { label: '标题', type: 'input', key: 'name', id: 0 },
-      {
-        label: '信息',
-        type: 'form',
-        key: 'info',
-        id: 1,
-        children: [
-          { label: '名字', type: 'input', key: 'name', id: 2 },
-          { label: '年龄', type: 'input', key: 'age', id: 3 },
-          {
-            label: '班级',
-            type: 'form',
-            key: 'grade',
-            id: 4,
-            children: [
-              { label: '年级', type: 'input', key: 'no', id: 5 },
-              { label: '班号', type: 'input', key: 'class', id: 2 },
-            ],
-          },
-        ],
-      },
-    ]),
+    default: () => ([]),
   },
   displayObject: {
     type: Object,
@@ -37,7 +16,32 @@ const props = defineProps({
   },
 })
 const { modelValue, formItems } = toRefs(props)
-const emits = defineEmits(['update:displayObject'])
+const emits = defineEmits(['update:displayObject', 'update:modelValue'])
+
+// console.log('formiTEMS', formItems)
+
+const formRef = ref()
+const form = ref(cloneDeep(modelValue.value))
+const getUseFormData = () => {
+  const _result = {}
+  formItems.value.forEach(({ key }) => {
+    console.log('@key')
+    _result[key] = form.value[key]
+  })
+  return _result
+}
+watch(modelValue, (val) => {
+  console.log('@modelValue', val)
+  form.value = cloneDeep(val)
+}, { deep: false })
+watch(form, (val) => {
+  console.log('@form', val)
+  formRef.value.validate((isVaild) => {
+    console.log('验证:', isVaild, form.value, getUseFormData())
+    isVaild && emits('update:modelValue', merge(modelValue.value, getUseFormData()) )
+  })
+}, { deep: true })
+
 const handle = (item) => {
   const curLevel = item.level
   item.display = !item.display
@@ -82,8 +86,12 @@ export default defineComponent({
 
 <template>
   <ElForm
-    :model="modelValue"
-    style="padding: 20px; width: 400px;"
+    ref="formRef"
+    :model="form"
+    :style="{ 
+      padding: '20px',
+      overflow: 'auto'
+    }"
     labelPosition="left"
   >
     <ElFormItem
@@ -95,19 +103,19 @@ export default defineComponent({
       :rules="item.rules"
     >
       <template v-if="item.type === 'input'">
-        <ElInput v-model="modelValue[item.key]"/>
+        <ElInput v-model="form[item.key]"/>
       </template>
       <template v-else-if="item.type === 'radio-group'">
-        <el-radio-group v-model="modelValue[item.key]">
+        <el-radio-group v-model="form[item.key]">
             <el-radio :label="true">是</el-radio>
             <el-radio :label="false">否</el-radio>
         </el-radio-group>
       </template>
       <template v-else-if="item.type === 'input-number'">
-        <el-input-number v-model="modelValue[item.key]" />
+        <el-input-number :min="1" v-model="form[item.key]" style="min-width: 100px"/>
       </template>
       <template v-else-if="item.type === 'select'">
-        <el-select v-model="modelValue[item.key]">
+        <el-select v-model="form[item.key]">
           <el-option 
             v-for="item in item.option" 
             :key="item.value" 
@@ -118,13 +126,13 @@ export default defineComponent({
         </el-select>
       </template>
       <template v-else>
-        <div style="height:22px; width:100%">
+        <!-- <div style="height:22px; width:100%"> -->
           <!-- <ElButton @click="() => handle(displayObject[item.key])">
             {{ displayObject[item.key].display ? '收起' : '展开' }}
           </ElButton> -->
-        </div>
+        <!-- </div> -->
         <Formx
-          v-model="modelValue[item.key]"
+          v-model="form[item.key]"
           :formItems="item.children"
         />
       </template>

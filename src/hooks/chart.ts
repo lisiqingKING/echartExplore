@@ -1,6 +1,6 @@
 import { ref, Ref, computed, watch } from 'vue'
 import { getFormsItemsDefaultData, produceTableDataMap, translateArrayOrObjectToSelf } from '../utils/forEchart'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, merge } from 'lodash'
 
 export const useGuidOption = (args: ChartGuide) => {
     const { option, defaultValues } = args
@@ -23,12 +23,20 @@ export const useChartDataInit = (formItemsMap: FormsItemsMap, guideOption: Chart
 
     // 用于表单编辑
     const forms: Ref<CommonObject> = ref(getFormsItemsDefaultData(formItemsMap));
+
+
+
     // 用于传给图表的props
-    const formsForChart = computed(() => {
-        return translateArrayOrObjectToSelf(cloneDeep(forms.value))
-    })
+    const formsForChart: Ref<CommonObject|undefined> = ref()
+    watch(forms, (val) => {
+        console.log('@watch forms', val)
+         formsForChart.value = translateArrayOrObjectToSelf(cloneDeep(forms.value))
+    }, { immediate: true, deep: true })
+
+
+
     watch(curSelectValue, () => {
-        forms.value = defaultValue
+        forms.value = cloneDeep(merge(forms.value, defaultValue.value))
     })
 
     // 用于表格

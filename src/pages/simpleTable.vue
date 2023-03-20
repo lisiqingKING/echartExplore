@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
-import { TableColumn } from '../constant/chart'
+import { TableColumn } from '@/constant/chart'
 withDefaults(
-    defineProps<{
-        tableColumn: TableColumns
-        }>(),
+    defineProps<{ tableColumn: TableColumns }>(),
     { tableColumn: () => TableColumn }  
 )
 

@@ -28,6 +28,7 @@ const to2DArray = (data: Array<any>) => {
 const handleHandlezXAxis = (props: Props, option: CommonObject) => {
     // console.log('@bar:xAxis', props.option)
     const { 
+        'type': xAxisType,
         'length': xAxisLength, 
         'show': xAxisShow, 
         'data': xAxisData
@@ -40,9 +41,9 @@ const handleHandlezXAxis = (props: Props, option: CommonObject) => {
     // 整体设置
     for (let i = 0; i < xAxisLength; i++) {
         _value.push({
-            type: 'category',
+            type: xAxisType,
             show: xAxisShow,
-            data: _xAxisData[i]
+            data: _xAxisData[i]??[]
         })
     }
 
@@ -55,17 +56,22 @@ const handleHandlezXAxis = (props: Props, option: CommonObject) => {
 const handleHandlezYAxis = (props: Props, option: CommonObject) => {
     // console.log('@bar:yAxis')
     const { 
+        'type': yAxisType,
         'length': yAxisLength,
         'show': yAxisShow, 
+        'data': yAxisData
     } = props.option.yAxis
 
     let _value: Axis = []
 
+    let _yAxisData: TwoDimensionArray = to2DArray(yAxisData)
+
     // 整体设置
     for (let i = 0; i < yAxisLength; i++) {
         _value.push({
-            type: 'value',
+            type: yAxisType,
             show: yAxisShow,
+            data: _yAxisData[i]??[]
         })
     }
 
@@ -92,7 +98,7 @@ const handleSeries = (props: Props, option: CommonObject) => {
     for (let i = 0; i < seriesLength; i++) {
         _value.push({
            type: 'bar',
-           data: _seriesData[i],
+           data: _seriesData[i]??[],
            label: seriesLabel
         //    color: _seriesColor[i],
         })
@@ -111,13 +117,7 @@ const itemHandleMap: { [propName: string]: Function } = {
     series: handleSeries
 }
 const barOptionHanlde = (props: Props, option: CommonObject) => {
-    // const needToDoItems = Object.keys(props).filter(item => TodoPropsList.find(toDoItem => toDoItem === item) )
-    // needToDoItems.forEach(item => {
-    //     itemHandleMap[item](props, option)
-    // })
-    // console.log('enter--------', cloneDeep(props))
     Object.keys(itemHandleMap).forEach(key => {
-        // console.log('exec func', props, option)
         itemHandleMap[key](props, option)
     })
 } 

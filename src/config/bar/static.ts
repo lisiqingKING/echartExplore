@@ -12,13 +12,26 @@ export const GuideTypeOption: CommonOption = [
     { label: '水平柱状图', value: 'level' },
 ]
 
+
+
 // 引导模式下的数据
+// 切换引导时 修改某些数据完成调整 还是修改全部数据
 export const GuideTypeDefaultValue: Record<string, CommonObject> = {
     vertical: {
-
+        xAxis: {
+            type: 'category',
+        },
+        yAxis: {
+            type: 'value',
+        }
     },
     level: {
-
+        xAxis: {
+            type: 'value',
+        },
+        yAxis: {
+            type: 'category',
+        }
     },
     any: {
 
@@ -64,7 +77,7 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             option: BarTypeOption,
             key: 'type',
             defaultValue: 'category',
-            note: '设置柱状图类型'
+            note: '设置类型'
         }
     ],
     'xAxis.length': [
@@ -73,7 +86,7 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             type: 'input-number', 
             key: 'length',
             defaultValue: 1,
-            note: '设置柱状图系列'
+            note: '设置长度'
         }
     ],
     'xAxis.show':   [
@@ -81,7 +94,8 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             label: 'xAxis是否显示', 
             type: 'radio-group', 
             key: 'show',
-            defaultValue: true
+            defaultValue: true,
+            note: '是否显示x轴'
         }
     ],
     'xAxis.data':   [
@@ -90,13 +104,15 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             type: 'input', 
             key: 'data', 
             defaultValue: "['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']",
+            note: 'x轴数据',
             rules: [
                 { 
                     validator: function (rule: any, value:any, callback: any) {
-                        console.log('......', value, rule, callback)
-                        // if (!(value as string).includes('[') ) {
-                        //     callback(new Error('请输入数组字符串'))
-                        // }
+                        if (!(value as string).includes('[') ) {
+                            callback(new Error('请输入数组字符串'))
+                        } else {
+                            callback()
+                        }
                     },
                     
                 }
@@ -108,7 +124,8 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             label: 'yAxis系类数目', 
             type: 'input-number', 
             key: 'length',
-            defaultValue: 1
+            defaultValue: 1,
+            note: '数目设置'
         }
     ],
     'yAxis.type': [
@@ -117,7 +134,8 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             type: 'select',
             option: BarTypeOption,
             key: 'type',
-            defaultValue: 'value'
+            defaultValue: 'value',
+            note: '类型设置'
         }
     ],
     'yAxis.show':   [
@@ -125,7 +143,8 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             label: 'yAxis是否显示', 
             type: 'radio-group', 
             key: 'show', 
-            defaultValue: true 
+            defaultValue: true,
+            note: '是否显示y轴'
         }
     ],
     'yAxis.data':   [
@@ -133,7 +152,8 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             label: 'yAxis数据', 
             type: 'input', 
             key: 'data', 
-            defaultValue: "[]"
+            defaultValue: "[]",
+            note: 'y轴数据设置'
         }
     ],
     'series.length': [
@@ -141,7 +161,8 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             label: 'series系类数目', 
             type: 'input-number', 
             key: 'length',
-            defaultValue: 1
+            defaultValue: 1,
+            note: '渲染数据系列长度'
         }
     ],
     'series.data':  [
@@ -149,7 +170,8 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             label: 'series数据', 
             type: 'input', 
             key: 'data',
-            defaultValue: '[120, 200, 150, 80, 70, 110, 130]'
+            defaultValue: '[120, 200, 150, 80, 70, 110, 130]',
+            note: '渲染数据设置'
         }
     ],
     'series.label': [
@@ -157,7 +179,7 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
           label: 'series标签', 
           type: 'form', 
           key: 'label', 
-          note: '标签设置',
+          note: '渲染数据标签设置',
           children: [
             { 
                 label: '标签是否展示', 

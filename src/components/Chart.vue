@@ -2,7 +2,7 @@
 import { useEventListener } from '@vueuse/core';
 import * as echarts from 'echarts'
 import { EChartsOption, ECharts  } from 'echarts';
-import { onMounted, watch, Ref, ref, watchEffect, onUpdated, toRefs } from 'vue';
+import { onMounted, watch, Ref, ref, watchEffect, onUpdated, toRefs,ShallowRef, markRaw, Raw } from 'vue';
 import Bar from '../config/bar/option'
 /**
  * ----------------------------------------------------------------
@@ -124,15 +124,14 @@ const props = withDefaults(defineProps<Props>(), {
 
 const option: Ref<EChartsOption|null> = ref(null)
 const chartDomRef: Ref<HTMLElement|null> = ref(null)
-const chartRef: Ref<ECharts|null> = ref(null)
+let chart: Raw<ECharts> | null = null
 
 // 处理图表缩放
 
 // 渲染图表
 const render = (option: EChartsOption) => {
-
   // 使用刚指定的配置项和数据显示图表。
-  (chartRef.value as ECharts).setOption(option);
+  (chart as Raw<ECharts>).setOption(option);
 }
 
 
@@ -142,7 +141,7 @@ const handleCommonPartOption = (optionValue: CommonObject,optionProps: Props ) =
 
 // 图表选线初始化
 const initOption = (optionProps: Props) => {
-  console.log('@initOption', optionProps.type, props.type)
+  console.log('@initOption', optionProps.type, props.type, optionProps)
   let _option: CommonObject = {}
 
   // 本组件如何处理 props 生成对应的option属性
@@ -165,10 +164,10 @@ watch(props, () => {
 
 onMounted(() => {
   initOption(props as Props)
-  chartRef.value = echarts.init(chartDomRef.value as HTMLElement);
+  chart = markRaw(echarts.init(chartDomRef.value as HTMLElement))
   render(option.value as EChartsOption)
   useEventListener('resize', () => {
-    props.isResize && chartRef.value?.resize()
+    chart?.resize()
   })
 })
 
