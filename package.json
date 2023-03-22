@@ -12,6 +12,7 @@
     "echarts": "^5.4.1",
     "element-plus": "^2.2.33",
     "lodash": "^4.17.21",
+    "pinia": "^2.0.33",
     "vue": "^3.2.45"
   },
   "devDependencies": {

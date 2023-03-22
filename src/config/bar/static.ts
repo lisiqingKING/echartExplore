@@ -3,6 +3,7 @@
  * 柱状图的配置选项设置默认表单
  */
 
+import { Ref } from 'vue'
 import { FormItems } from '../../types/chartForm'
 
 // 引导模式的选项
@@ -77,7 +78,16 @@ export const FormsItemsMap: { [propName: string]: FormItems } = {
             option: BarTypeOption,
             key: 'type',
             defaultValue: 'category',
-            note: '设置类型'
+            note: '设置类型',
+            disabled: function (curGuideValue: string, form: CommonObject) {
+                console.log('---------------------', curGuideValue, form)
+                if (curGuideValue !== 'any') {
+                    return true
+                } else {
+                    return false
+                }
+    
+            }
         }
     ],
     'xAxis.length': [

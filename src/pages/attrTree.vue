@@ -1,6 +1,14 @@
 <script setup>
 import { toRefs, ref, watch } from 'vue'
 import { cloneDeep, merge } from 'lodash'
+import { useEditContent } from '@/store/index.ts'
+
+const store = useEditContent()
+const setCurEditContent = (target, key) => {
+  console.log(`output-target, key`,target, key)
+  store.setContent({ target, key})
+}
+
 const props = defineProps({
   modelValue: {
     type: Object,
@@ -18,7 +26,7 @@ const props = defineProps({
 const { modelValue, formItems } = toRefs(props)
 const emits = defineEmits(['update:displayObject', 'update:modelValue'])
 
-// console.log('formiTEMS', formItems)
+console.log('formiTEMS', formItems)
 
 const formRef = ref()
 const form = ref(cloneDeep(modelValue.value))
@@ -36,7 +44,7 @@ watch(modelValue, (val) => {
 }, { deep: false })
 watch(form, (val) => {
   console.log('@form', val)
-  formRef.value.validate((isVaild) => {
+  formRef.value?.validate((isVaild) => {
     console.log('验证:', isVaild, form.value, getUseFormData())
     isVaild && emits('update:modelValue', merge(modelValue.value, getUseFormData()) )
   })
@@ -103,7 +111,10 @@ export default defineComponent({
       :rules="item.rules"
     >
       <template v-if="item.type === 'input'">
-        <ElInput v-model="form[item.key]"/>
+        <ElInput 
+          v-model="form[item.key]" 
+          @focus="() => setCurEditContent(form, item.key)"
+        />
       </template>
       <template v-else-if="item.type === 'radio-group'">
         <el-radio-group v-model="form[item.key]">
@@ -115,7 +126,8 @@ export default defineComponent({
         <el-input-number :min="1" v-model="form[item.key]" style="min-width: 100px"/>
       </template>
       <template v-else-if="item.type === 'select'">
-        <el-select v-model="form[item.key]">
+       
+        <el-select v-model="form[item.key]"  :disabled="item.disabled">
           <el-option 
             v-for="item in item.option" 
             :key="item.value" 

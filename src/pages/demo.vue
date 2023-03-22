@@ -5,7 +5,18 @@ import codeView from './codeView.vue';
 import { ChartGuide, FormsItemsMap, TableColumnsMap } from '@/config/bar/static'
 import { useChartDataInit } from '@/hooks/chart'
 import { ElOption, ElSelect } from 'element-plus';
-// import EditPanel from './EditPanel.vue';
+import EditPanel from './EditPanel.vue';
+import { toRefs, watch, toRef, Ref } from 'vue';
+
+import { useEditContent } from '@/store/index'
+;
+const store = useEditContent()
+const content: Ref<string> = toRef(store, 'content')
+// watch(content, () => {
+//     console.log('@修改表单中的数据')
+//     store.setOrign()
+// })
+
 const { forms, tableDataMap, option, curSelectValue, propsForChart, formsItemsMap, tableColumnsMap   } = useChartDataInit(FormsItemsMap, ChartGuide, TableColumnsMap)
 console.log('forms', forms)
 console.log('tableDataMap', tableDataMap)
@@ -35,6 +46,8 @@ console.log('propsForChart', propsForChart)
               :tableColumnsMap="tableColumnsMap"
               :formsItemsMap="formsItemsMap"
             />
+
+            <EditPanel :modelValue="content" @update="store.setOrign" />
 
         </div>
         <div class="right">
